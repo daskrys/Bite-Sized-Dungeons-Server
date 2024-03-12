@@ -1,4 +1,4 @@
-import GameState from "./models/game_state";
+import GameState from "./models/game_state.js";
 
 /** Methods to interact with GameState objects. */
 export default class GameStateManager {
@@ -6,17 +6,13 @@ export default class GameStateManager {
      *  generator for convenience.
      *
      *  Using options that are not pre-validated is undefined behaviour. */
-    GameStateManager(defaultInitialState) {
-        if (defaultInitialState) {
-            this.defaultInitialGameState = defaultInitialState;
-            return;
-        }
-
+    GameStateManager() {
+        
         // Populate default initial state with default values if not given
         // TODO: Consider putting this into an external JSON file
         this.defaultInitialGameState = new GameState();
-        let i;
-        for (i = 0; i < 4; i++)
+        /*
+        for (let i = 0; i < 4; i++)
             this.defaultInitialGameState.addPlayer({
                 skills: [
                     {
@@ -49,6 +45,7 @@ export default class GameStateManager {
             health: 5000,
             attack: 20
         });
+        */
     }
 
     /** Returns a new GameState with the default player and enemy values

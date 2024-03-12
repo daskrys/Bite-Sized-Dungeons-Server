@@ -1,60 +1,87 @@
 /** Data model for validating and modifying game states. */
 export default class GameState {
-    GameState() {
-        /* Consumers should not modify players and enemies directly.
-         * Use the convenience methods addPlayer and addEnemy instead. */
-        this.players = [];
-        this.enemies = [];
+    constructor() {
+
+        this.players = {};
+        this.enemyHealth = 5000;
         this.lastModified = 0;
+        this.lobbyFull = false;
 
         /* TODO: If this ends up being a server-only implementation, consider
          * adding the mutex locking functionality here */
     }
-    validateEntity(entity) {
-        if (!Array.isArray(entity.skills)) entity.skills = [];
-        else {
-            // Validate and remove invalid skills
-            entity.skills = entity.skills.filter((skill) => {
-                try {
-                    return typeof skill.type == 'string'
-                        && typeof skill.skillCooldown == 'number'
-                        && typeof skill.cooldown == 'number';
-                } catch {
-                    return false;
-                }
-            });
-            entity.skills = entity.skills.map((skill) => {
-                skill.lastUsed = 0;
-                skill.cooldownExpires = 0;
-            });
+
+    addPlayer(session) {
+        
+        if(Object.keys(this.players).length >= 4 && this.players[session] == undefined) { 
+            this.lobbyFull = true;
         }
 
-        // Validate and fill required values
-        if (!entity.attack || typeof entity.attack !== 'number')
-            entity.attack = 0;
-        if (!entity.maxHealth || typeof entity.maxHealth !== 'number')
-            entity.maxHealth == 0;
-        if (!entity.health || typeof entity.maxHealth !== 'number')
-            entity.health == 0;
+        if (this.lobbyFull == false) {
+            this.players[session] = { 
+                skills: [
+                    {
+                        type: "Attack",
+                        skillCooldown: 0,
+                        cooldown: 2000
+                    },
+                    {
+                        type: "Heal",
+                        skillCooldown: 0,
+                        cooldown: 3000
+                    },
+                    {
+                        type: "Draining Blow",
+                        skillCooldown: 15,
+                        cooldown: 4000
+                    },
+                    {
+                        type: "Rampage",
+                        skillCooldown: 20,
+                        cooldown: 5000
+                    }
+                ],
+                maxHealth: 100,
+                health: 100,
+                attack: 10,
+                cooldown: Date.now(),
+                playerNumber: Object.keys(this.players).length + 1,
+                room: 1
+            };
+        }
+    }
 
-        return entity;
+    handleAction(action, session) { 
+        if (this.players[session] == undefined) {
+            console.log('Player not found');
+            
+            return;
+        }
+
+        const startTime = this.players[session].cooldown;
+        const currentTime = Date.now();
+        const elapsedTime = currentTime - startTime;
+        
+        
     }
-    addPlayer(player) {
-        this.players.push(this.validateEntity(player));
+
+    updateEnemyHealth(damage) {
+        this.enemyHealth -= damage;
     }
-    addEnemy(enemy) {
-        this.enemies.push(this.validateEntity(enemy));
-    }
+
     clone() {
         let newState = new GameState();
+
         newState.players = [ ...this.players ];
         newState.enemies = [ ...this.enemies ];
+
         return newState;
     }
     /** Convenience function to get an entity and validate type and index */
     getEntity(type, index) {
         if (type == 'player' && this.players.length > index)
             return this.players[index];
+        
         if (type == 'enemy' && this.enemies.length > index)
             return this.enemies[index];
     }

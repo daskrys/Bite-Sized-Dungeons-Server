@@ -4,11 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<script src="index.js" type="module"></script>
   </head>
   <body>
     <main>
-        <h1>BSD Server Test Client</h1>  
+        <h1>BSD Server Test Client</h1>
+        <div>
+          <h2 id="player-num">Player Number</h2>
+          <h2 id="player-1">Waiting for player...</h2>
+          <h2 id="player-2">Waiting for player...</h2>
+          <h2 id="player-3">Waiting for player...</h2>
+          <button onclick="buttonClick(1);">Attack</button>
+          <button onclick="buttonClick(2);">Heal</button>
+          <button onclick="buttonClick(3);">Draining Blow</button>
+          <button onclick="buttonClick(4);">Rampage</button>
+          <h2 id="dragon-health">Dragon Health:</h2>
+        </div>
     </main>
+    <script src="index.js" type="module"></script>
   </body>
 </html>
